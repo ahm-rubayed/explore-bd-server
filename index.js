@@ -29,6 +29,7 @@ async function run() {
     const snapCollection = client.db("explore-bd").collection("snap-desc");
     const tripPackageCollection = client.db("explore-bd").collection("package-trip");
     const scheduleTripCollection = client.db("explore-bd").collection("schedule-trip");
+    const snapTripCollection = client.db("explore-bd").collection("snap-trip");
 
     app.get("/feedback", async (req, res) => {
       let query = {};
@@ -164,6 +165,19 @@ async function run() {
     app.post("/admin/scheduleTrip", async (req, res) => {
       const scheduleTrip = req.body;
       const result = await scheduleTripCollection.insertOne(scheduleTrip);
+      res.send(result);
+    });
+
+    app.get("/admin/snapTrip", async (req, res) => {
+      let query = {};
+      const cursor = snapTripCollection.find(query);
+      const snapTrip = await cursor.toArray();
+      res.send(snapTrip);
+    });
+
+    app.post("/admin/snapTrip", async (req, res) => {
+      const snapTrip = req.body;
+      const result = await snapTripCollection.insertOne(snapTrip);
       res.send(result);
     });
 
