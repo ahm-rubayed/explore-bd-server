@@ -19,12 +19,20 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const feedbackCollection = client.db("explore-bd").collection("feedback");
-    const categoriesCollection = client.db("explore-bd").collection("categories");
+    const categoriesCollection = client
+      .db("explore-bd")
+      .collection("categories");
     const servicesCollection = client.db("explore-bd").collection("services");
     const tripsCollection = client.db("explore-bd").collection("trips");
     const aboutCollection = client.db("explore-bd").collection("about-desc");
     const teamsCollection = client.db("explore-bd").collection("teams");
-    const packageCollection = client.db("explore-bd").collection("package-desc");
+    const packageCollection = client
+      .db("explore-bd")
+      .collection("package-desc");
+    const scheduleCollection = client
+      .db("explore-bd")
+      .collection("schedule-desc");
+    const snapCollection = client.db("explore-bd").collection("snap-desc");
 
     app.get("/feedback", async (req, res) => {
       let query = {};
@@ -72,7 +80,7 @@ async function run() {
       res.send(result);
     });
 
-        app.get("/admin/about", async (req, res) => {
+    app.get("/admin/about", async (req, res) => {
       let query = {};
       const cursor = aboutCollection.find(query);
       const about = await cursor.toArray();
@@ -85,7 +93,7 @@ async function run() {
       res.send(result);
     });
 
-            app.get("/admin/packages", async (req, res) => {
+    app.get("/admin/packages", async (req, res) => {
       let query = {};
       const cursor = packageCollection.find(query);
       const package = await cursor.toArray();
@@ -95,6 +103,32 @@ async function run() {
     app.post("/admin/packages", async (req, res) => {
       const package = req.body;
       const result = await packageCollection.insertOne(package);
+      res.send(result);
+    });
+
+    app.get("/admin/schedule", async (req, res) => {
+      let query = {};
+      const cursor = scheduleCollection.find(query);
+      const schedule = await cursor.toArray();
+      res.send(schedule);
+    });
+
+    app.post("/admin/schedule", async (req, res) => {
+      const schedule = req.body;
+      const result = await scheduleCollection.insertOne(schedule);
+      res.send(result);
+    });
+
+    app.get("/admin/snap", async (req, res) => {
+      let query = {};
+      const cursor = snapCollection.find(query);
+      const snap = await cursor.toArray();
+      res.send(snap);
+    });
+
+    app.post("/admin/snap", async (req, res) => {
+      const snap = req.body;
+      const result = await snapCollection.insertOne(snap);
       res.send(result);
     });
 
@@ -110,7 +144,6 @@ async function run() {
       const result = await teamsCollection.insertOne(teams);
       res.send(result);
     });
-    
   } finally {
   }
 }
