@@ -42,8 +42,8 @@ async function run() {
     app.get("/admin/categories", async (req, res) => {
       let query = {};
       const cursor = categoriesCollection.find(query);
-      const about = await cursor.toArray();
-      res.send(about);
+      const categories = await cursor.toArray();
+      res.send(categories);
     });
 
     app.get("/admin/services", async (req, res) => {
