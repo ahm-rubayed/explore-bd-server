@@ -27,6 +27,8 @@ async function run() {
     const packageCollection = client.db("explore-bd").collection("package-desc");
     const scheduleCollection = client.db("explore-bd").collection("schedule-desc");
     const snapCollection = client.db("explore-bd").collection("snap-desc");
+    const tripPackageCollection = client.db("explore-bd").collection("package-trip");
+    const scheduleTripCollection = client.db("explore-bd").collection("schedule-trip");
 
     app.get("/feedback", async (req, res) => {
       let query = {};
@@ -136,6 +138,32 @@ async function run() {
     app.post("/admin/teams", async (req, res) => {
       const teams = req.body;
       const result = await teamsCollection.insertOne(teams);
+      res.send(result);
+    });
+
+    app.get("/admin/tripPackage", async (req, res) => {
+      let query = {};
+      const cursor = tripPackageCollection.find(query);
+      const tripPackage = await cursor.toArray();
+      res.send(tripPackage);
+    });
+
+    app.post("/admin/tripPackage", async (req, res) => {
+      const tripPackage = req.body;
+      const result = await tripPackageCollection.insertOne(tripPackage);
+      res.send(result);
+    });
+
+      app.get("/admin/scheduleTrip", async (req, res) => {
+      let query = {};
+      const cursor = scheduleTripCollection.find(query);
+      const scheduleTrip = await cursor.toArray();
+      res.send(scheduleTrip);
+    });
+
+    app.post("/admin/scheduleTrip", async (req, res) => {
+      const scheduleTrip = req.body;
+      const result = await scheduleTripCollection.insertOne(scheduleTrip);
       res.send(result);
     });
 
