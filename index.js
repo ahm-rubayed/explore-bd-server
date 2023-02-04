@@ -19,19 +19,13 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const feedbackCollection = client.db("explore-bd").collection("feedback");
-    const categoriesCollection = client
-      .db("explore-bd")
-      .collection("categories");
+    const categoriesCollection = client.db("explore-bd").collection("categories");
     const servicesCollection = client.db("explore-bd").collection("services");
     const tripsCollection = client.db("explore-bd").collection("trips");
     const aboutCollection = client.db("explore-bd").collection("about-desc");
     const teamsCollection = client.db("explore-bd").collection("teams");
-    const packageCollection = client
-      .db("explore-bd")
-      .collection("package-desc");
-    const scheduleCollection = client
-      .db("explore-bd")
-      .collection("schedule-desc");
+    const packageCollection = client.db("explore-bd").collection("package-desc");
+    const scheduleCollection = client.db("explore-bd").collection("schedule-desc");
     const snapCollection = client.db("explore-bd").collection("snap-desc");
 
     app.get("/feedback", async (req, res) => {
@@ -144,7 +138,10 @@ async function run() {
       const result = await teamsCollection.insertOne(teams);
       res.send(result);
     });
-  } finally {
+
+  } 
+  finally {
+
   }
 }
 
