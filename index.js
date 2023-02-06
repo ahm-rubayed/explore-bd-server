@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const port = process.env.PORT || 5000;
 
@@ -141,6 +141,21 @@ async function run() {
       const result = await teamsCollection.insertOne(teams);
       res.send(result);
     });
+
+    app.delete("/team/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await teamsCollection.deleteOne(filter);
+      res.send(result);
+    });
+
+    app.delete("/about/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await teamsCollection.deleteOne(filter);
+      res.send(result);
+    });
+
 
     app.get("/admin/tripPackage", async (req, res) => {
       let query = {};
