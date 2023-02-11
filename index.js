@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const stripe = require("stripe")("sk_test_51M7I5sJSKxqvc4gJEwnBELCjit3WXyDF3SIIK7suLXIxm6nrFvQDJRaqaOLey3jXLaKvINPZA14Tk3ewXadMfnuM00R7aOfiEO")
 
 const port = process.env.PORT || 5000;
 
@@ -18,6 +19,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    const usersCollection = client.db("explore-bd").collection("users")
     const feedbackCollection = client.db("explore-bd").collection("feedback");
     const categoriesCollection = client.db("explore-bd").collection("categories");
     const servicesCollection = client.db("explore-bd").collection("services");
@@ -30,6 +32,39 @@ async function run() {
     const tripPackageCollection = client.db("explore-bd").collection("package-trip");
     const scheduleTripCollection = client.db("explore-bd").collection("schedule-trip");
     const snapTripCollection = client.db("explore-bd").collection("snap-trip");
+
+
+  //   app.post('/create-payment-intent', async (req, res) => {
+  //     const booking = req.body;
+  //     const price = booking.price;
+  //     const amount = price * 100;
+
+  //     const paymentIntent = await stripe.paymentIntents.create({
+  //         currency: 'usd',
+  //         amount: amount,
+  //         "payment_method_types": [
+  //             "card"
+  //         ]
+  //     });
+  //     res.send({
+  //         clientSecret: paymentIntent.client_secret,
+  //     });
+  // });
+
+  // Users
+  app.post("/users", async (req, res) => {
+    const user = req.body;
+    const result = await usersCollection.insertOne(user);
+    res.send(result);
+  });
+
+  // Get User  By Email
+  app.get("/users", async (req, res) => {
+    const email = req.query.email;
+    const query = { email: email };
+    const result = await usersCollection.findOne(query);
+    res.send(result);
+  });
 
     app.get("/feedback", async (req, res) => {
       let query = {};
