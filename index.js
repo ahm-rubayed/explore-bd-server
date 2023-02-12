@@ -89,6 +89,7 @@ async function run() {
       res.send(cart);
     });
 
+
     app.get("/feedback", async (req, res) => {
       let query = {};
       const cursor = feedbackCollection.find(query);
@@ -145,6 +146,13 @@ async function run() {
     app.post("/admin/about", async (req, res) => {
       const about = req.body;
       const result = await aboutCollection.insertOne(about);
+      res.send(result);
+    });
+
+            app.delete('/aboutDesc/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await aboutCollection.deleteOne(query);
       res.send(result);
     });
 
