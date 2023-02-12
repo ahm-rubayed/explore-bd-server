@@ -20,6 +20,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const usersCollection = client.db("explore-bd").collection("users")
+    const userscartCollection = client.db("explore-bd").collection("cart")
     const feedbackCollection = client.db("explore-bd").collection("feedback");
     const categoriesCollection = client.db("explore-bd").collection("categories");
     const servicesCollection = client.db("explore-bd").collection("services");
@@ -64,6 +65,29 @@ async function run() {
     const users = await usersCollection.find(query).toArray();
     res.send(users);
   });
+
+  // cart
+    app.post('/cart', async (req, res) => {
+      const cart = req.body;
+      const query = {
+        travel: cart.course,
+        email: cart.email
+      };
+      // const alreadyAdded = await userscartCollection.find(query).toArray();
+      // if (alreadyAdded.length) {
+      //   const message = `You already have adeed this`;
+      //   return res.send({ acknowledged: false, message });
+      // }
+      const result = await userscartCollection.insertOne(cart);
+      res.send(result);
+    });
+
+  app.get('/cart', async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const cart = await userscartCollection.find(query).toArray();
+      res.send(cart);
+    });
 
     app.get("/feedback", async (req, res) => {
       let query = {};
