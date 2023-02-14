@@ -233,6 +233,14 @@ async function run() {
       res.send(result);
     });
 
+    app.delete('/snapDesc/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await snapCollection.deleteOne(query);
+      res.send(result);
+    });
+
+
     app.get("/admin/teams", async (req, res) => {
       let query = {};
       const cursor = teamsCollection.find(query);
