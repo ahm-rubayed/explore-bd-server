@@ -33,24 +33,47 @@ async function run() {
     const tripPackageCollection = client.db("explore-bd").collection("package-trip");
     const scheduleTripCollection = client.db("explore-bd").collection("schedule-trip");
     const snapTripCollection = client.db("explore-bd").collection("snap-trip");
+    const travelPlacePurchase = client.db("explore-bd").collection("payment");
 
 
-  //   app.post('/create-payment-intent', async (req, res) => {
-  //     const booking = req.body;
-  //     const price = booking.price;
-  //     const amount = price * 100;
+    app.post('/create-payment-intent', async (req, res) => {
+      const booking = req.body;
+      const price = booking.total;
+      console.log(booking)
+      const amount = price * 100;
 
-  //     const paymentIntent = await stripe.paymentIntents.create({
-  //         currency: 'usd',
-  //         amount: amount,
-  //         "payment_method_types": [
-  //             "card"
-  //         ]
-  //     });
-  //     res.send({
-  //         clientSecret: paymentIntent.client_secret,
-  //     });
-  // });
+      const paymentIntent = await stripe.paymentIntents.create({
+          currency: 'usd',
+          amount: amount,
+          "payment_method_types": [
+              "card"
+          ]
+      });
+      res.send({
+          clientSecret: paymentIntent.client_secret,
+      });
+  });
+
+  // purchase
+  app.post('/purchased-course', async (req, res) => {
+    const data = req.body;
+    const upload = await travelPlacePurchase.insertOne(data);
+    res.send(upload);
+  })
+
+  app.get("/purchased-courses/:email", async (req, res) => {
+    const email = req.params.email;
+    const query = { email };
+    const result = await travelPlacePurchase.find(query).toArray();
+    res.send(result);
+  });
+
+  app.delete("/cart/:email", async (req, res) => {
+    const email = req.params.email;
+    const query = { email: email };
+    const result = await userscartCollection.deleteMany(query);
+    res.send(result);
+  });
 
   // Users
   app.post("/users", async (req, res) => {
@@ -66,18 +89,24 @@ async function run() {
     res.send(users);
   });
 
+    app.get("/cart/:id", async (req, res) => {
+    const query = {};
+    const cart = await userscartCollection.find(query).toArray();
+    res.send(cart);
+  });
+
   // cart
     app.post('/cart', async (req, res) => {
       const cart = req.body;
       const query = {
-        travel: cart.course,
+        travel: cart.travel,
         email: cart.email
       };
-      // const alreadyAdded = await userscartCollection.find(query).toArray();
-      // if (alreadyAdded.length) {
-      //   const message = `You already have adeed this`;
-      //   return res.send({ acknowledged: false, message });
-      // }
+      const alreadyAdded = await userscartCollection.find(query).toArray();
+      if (alreadyAdded.length) {
+        const message = `You already have adeed this`;
+        return res.send({ acknowledged: false, message });
+      }
       const result = await userscartCollection.insertOne(cart);
       res.send(result);
     });
@@ -175,6 +204,8 @@ async function run() {
       const result = await packageCollection.insertOne(package);
       res.send(result);
     });
+
+    // delete
 
     app.get("/admin/schedule", async (req, res) => {
       let query = {};
