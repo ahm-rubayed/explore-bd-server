@@ -140,34 +140,26 @@ async function run() {
       res.send(categories);
     });
 
-
-
-
-    app.get("/admin/booked", async (req, res) => {
+    app.get("/booked", async (req, res) => {
       let query = {};
       const cursor = bookedCollection.find(query);
       const booked = await cursor.toArray();
       res.send(booked);
     });
 
-    app.post("/admin/booked", async (req, res) => {
+    app.post("/booked", async (req, res) => {
       const booked = req.body;
       const result = await bookedCollection.insertOne(booked);
       res.send(result);
     });
 
-    app.delete("/booked/:id", async (req, res) => {
+
+    app.delete("admin/booked/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await bookedCollection.deleteOne(query);
       res.send(result);
     });
-
-
-
-
-
-
 
     app.get("/admin/services", async (req, res) => {
       let query = {};
