@@ -3,7 +3,9 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const stripe = require("stripe")("sk_test_51M7I5sJSKxqvc4gJEwnBELCjit3WXyDF3SIIK7suLXIxm6nrFvQDJRaqaOLey3jXLaKvINPZA14Tk3ewXadMfnuM00R7aOfiEO")
+const stripe = require("stripe")(
+  "sk_test_51M7I5sJSKxqvc4gJEwnBELCjit3WXyDF3SIIK7suLXIxm6nrFvQDJRaqaOLey3jXLaKvINPZA14Tk3ewXadMfnuM00R7aOfiEO"
+);
 
 const port = process.env.PORT || 5000;
 
@@ -19,19 +21,29 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    const usersCollection = client.db("explore-bd").collection("users")
-    const userscartCollection = client.db("explore-bd").collection("cart")
+    const usersCollection = client.db("explore-bd").collection("users");
+    const userscartCollection = client.db("explore-bd").collection("cart");
     const feedbackCollection = client.db("explore-bd").collection("feedback");
-    const categoriesCollection = client.db("explore-bd").collection("categories");
+    const categoriesCollection = client
+      .db("explore-bd")
+      .collection("categories");
     const servicesCollection = client.db("explore-bd").collection("services");
     const tripsCollection = client.db("explore-bd").collection("trips");
     const aboutCollection = client.db("explore-bd").collection("about-desc");
     const teamsCollection = client.db("explore-bd").collection("teams");
-    const packageCollection = client.db("explore-bd").collection("package-desc");
-    const scheduleCollection = client.db("explore-bd").collection("schedule-desc");
+    const packageCollection = client
+      .db("explore-bd")
+      .collection("package-desc");
+    const scheduleCollection = client
+      .db("explore-bd")
+      .collection("schedule-desc");
     const snapCollection = client.db("explore-bd").collection("snap-desc");
-    const tripPackageCollection = client.db("explore-bd").collection("package-trip");
-    const scheduleTripCollection = client.db("explore-bd").collection("schedule-trip");
+    const tripPackageCollection = client
+      .db("explore-bd")
+      .collection("package-trip");
+    const scheduleTripCollection = client
+      .db("explore-bd")
+      .collection("schedule-trip");
     const snapTripCollection = client.db("explore-bd").collection("snap-trip");
     const travelPlacePurchase = client.db("explore-bd").collection("payment");
 
@@ -53,33 +65,12 @@ async function run() {
       });
   });
 
-  // purchase
-  app.post('/purchased-course', async (req, res) => {
-    const data = req.body;
-    const upload = await travelPlacePurchase.insertOne(data);
-    res.send(upload);
-  })
-
-  app.get("/purchased-courses/:email", async (req, res) => {
-    const email = req.params.email;
-    const query = { email };
-    const result = await travelPlacePurchase.find(query).toArray();
-    res.send(result);
-  });
-
-  app.delete("/cart/:email", async (req, res) => {
-    const email = req.params.email;
-    const query = { email: email };
-    const result = await userscartCollection.deleteMany(query);
-    res.send(result);
-  });
-
-  // Users
-  app.post("/users", async (req, res) => {
-    const user = req.body;
-    const result = await usersCollection.insertOne(user);
-    res.send(result);
-  });
+    // Users
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
 
   // Get User  By Email
   app.get("/users", async (req, res) => {
@@ -105,7 +96,7 @@ async function run() {
     app.post('/cart', async (req, res) => {
       const cart = req.body;
       const query = {
-        travel: cart.travel,
+        travel: cart.course,
         email: cart.email
       };
       const alreadyAdded = await userscartCollection.find(query).toArray();
@@ -117,20 +108,19 @@ async function run() {
       res.send(result);
     });
 
-  app.get('/cart', async (req, res) => {
+    app.get("/cart", async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
       const cart = await userscartCollection.find(query).toArray();
       res.send(cart);
     });
 
-    app.delete('/cart/:id', async (req, res) => {
+    app.delete("/cart/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await userscartCollection.deleteOne(query);
       res.send(result);
     });
-
 
     app.get("/feedback", async (req, res) => {
       let query = {};
@@ -165,6 +155,13 @@ async function run() {
       res.send(result);
     });
 
+    app.delete("/services/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await servicesCollection.deleteOne(query);
+      res.send(result);
+    });
+
     app.get("/admin/trips", async (req, res) => {
       let query = {};
       const cursor = tripsCollection.find(query);
@@ -175,6 +172,13 @@ async function run() {
     app.post("/admin/trips", async (req, res) => {
       const trips = req.body;
       const result = await tripsCollection.insertOne(trips);
+      res.send(result);
+    });
+
+    app.delete("/trip/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await tripsCollection.deleteOne(query);
       res.send(result);
     });
 
@@ -191,7 +195,7 @@ async function run() {
       res.send(result);
     });
 
-            app.delete('/aboutDesc/:id', async (req, res) => {
+    app.delete("/aboutDesc/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await aboutCollection.deleteOne(query);
@@ -211,8 +215,6 @@ async function run() {
       res.send(result);
     });
 
-    // delete
-
     app.get("/admin/schedule", async (req, res) => {
       let query = {};
       const cursor = scheduleCollection.find(query);
@@ -223,6 +225,20 @@ async function run() {
     app.post("/admin/schedule", async (req, res) => {
       const schedule = req.body;
       const result = await scheduleCollection.insertOne(schedule);
+      res.send(result);
+    });
+
+    app.delete("/scheduleDesc/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await scheduleCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    app.delete("/scheduleTrip/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await scheduleTripCollection.deleteOne(query);
       res.send(result);
     });
 
@@ -239,14 +255,6 @@ async function run() {
       res.send(result);
     });
 
-    app.delete('/snapDesc/:id', async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const result = await snapCollection.deleteOne(query);
-      res.send(result);
-    });
-
-
     app.get("/admin/teams", async (req, res) => {
       let query = {};
       const cursor = teamsCollection.find(query);
@@ -260,20 +268,12 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/team/:id", async (req, res) => {
+    app.delete("/teams/:id", async (req, res) => {
       const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
-      const result = await teamsCollection.deleteOne(filter);
+      const query = { _id: ObjectId(id) };
+      const result = await teamsCollection.deleteOne(query);
       res.send(result);
     });
-
-    app.delete("/about/:id", async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
-      const result = await teamsCollection.deleteOne(filter);
-      res.send(result);
-    });
-
 
     app.get("/admin/tripPackage", async (req, res) => {
       let query = {};
@@ -288,7 +288,14 @@ async function run() {
       res.send(result);
     });
 
-      app.get("/admin/scheduleTrip", async (req, res) => {
+    app.delete("/trip/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await tripsCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    app.get("/admin/scheduleTrip", async (req, res) => {
       let query = {};
       const cursor = scheduleTripCollection.find(query);
       const scheduleTrip = await cursor.toArray();
@@ -313,10 +320,7 @@ async function run() {
       const result = await snapTripCollection.insertOne(snapTrip);
       res.send(result);
     });
-
-  } 
-  finally {
-
+  } finally {
   }
 }
 
