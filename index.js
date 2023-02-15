@@ -46,24 +46,22 @@ async function run() {
       .collection("schedule-trip");
     const snapTripCollection = client.db("explore-bd").collection("snap-trip");
     const travelPlacePurchase = client.db("explore-bd").collection("payment");
+    const bookedCollection = client.db("explore-bd").collection("booked");
 
-
-    app.post('/create-payment-intent', async (req, res) => {
+    app.post("/create-payment-intent", async (req, res) => {
       const booking = req.body;
       const price = booking.total;
       const amount = price * 100;
 
       const paymentIntent = await stripe.paymentIntents.create({
-          currency: 'usd',
-          amount: amount,
-          "payment_method_types": [
-              "card"
-          ]
+        currency: "usd",
+        amount: amount,
+        payment_method_types: ["card"],
       });
       res.send({
-          clientSecret: paymentIntent.client_secret,
+        clientSecret: paymentIntent.client_secret,
       });
-  });
+    });
 
     // Users
     app.post("/users", async (req, res) => {
@@ -72,14 +70,14 @@ async function run() {
       res.send(result);
     });
 
-  // Get User  By Email
-  app.get("/users", async (req, res) => {
-    const query = {};
-    const users = await usersCollection.find(query).toArray();
-    res.send(users);
-  });
+    // Get User  By Email
+    app.get("/users", async (req, res) => {
+      const query = {};
+      const users = await usersCollection.find(query).toArray();
+      res.send(users);
+    });
 
-        app.get("/users/admin/:email", async (req, res) => {
+    app.get("/users/admin/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email };
       const user = await usersCollection.findOne(query);
@@ -87,17 +85,17 @@ async function run() {
     });
 
     app.get("/cart/:id", async (req, res) => {
-    const query = {};
-    const cart = await userscartCollection.find(query).toArray();
-    res.send(cart);
-  });
+      const query = {};
+      const cart = await userscartCollection.find(query).toArray();
+      res.send(cart);
+    });
 
-  // cart
-    app.post('/cart', async (req, res) => {
+    // cart
+    app.post("/cart", async (req, res) => {
       const cart = req.body;
       const query = {
         travel: cart.course,
-        email: cart.email
+        email: cart.email,
       };
       const alreadyAdded = await userscartCollection.find(query).toArray();
       if (alreadyAdded.length) {
@@ -141,6 +139,35 @@ async function run() {
       const categories = await cursor.toArray();
       res.send(categories);
     });
+
+
+
+
+    app.get("/admin/booked", async (req, res) => {
+      let query = {};
+      const cursor = bookedCollection.find(query);
+      const booked = await cursor.toArray();
+      res.send(booked);
+    });
+
+    app.post("/admin/booked", async (req, res) => {
+      const booked = req.body;
+      const result = await bookedCollection.insertOne(booked);
+      res.send(result);
+    });
+
+    app.delete("/booked/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await bookedCollection.deleteOne(query);
+      res.send(result);
+    });
+
+
+
+
+
+
 
     app.get("/admin/services", async (req, res) => {
       let query = {};
@@ -288,10 +315,10 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/trip/:id", async (req, res) => {
+    app.delete("/tripPackage/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
-      const result = await tripsCollection.deleteOne(query);
+      const result = await tripPackageCollection.deleteOne(query);
       res.send(result);
     });
 
@@ -318,6 +345,20 @@ async function run() {
     app.post("/admin/snapTrip", async (req, res) => {
       const snapTrip = req.body;
       const result = await snapTripCollection.insertOne(snapTrip);
+      res.send(result);
+    });
+
+    app.delete("/snapDesc/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await snapCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    app.delete("/snapTrip/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await snapTripCollection.deleteOne(query);
       res.send(result);
     });
   } finally {
