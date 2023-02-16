@@ -47,6 +47,8 @@ async function run() {
     const snapTripCollection = client.db("explore-bd").collection("snap-trip");
     const travelPlacePurchase = client.db("explore-bd").collection("payment");
     const bookedCollection = client.db("explore-bd").collection("booked");
+    const adminCollection = client.db("explore-bd").collection("admin");
+    const editorCollection = client.db("explore-bd").collection("editor");
 
     app.post("/create-payment-intent", async (req, res) => {
       const booking = req.body;
@@ -83,6 +85,46 @@ async function run() {
       const user = await usersCollection.findOne(query);
       res.send({ isAdmin: user?.role === "admin" });
     });
+
+
+
+ app.get("/makeAdmin",async (req, res) => {
+      const query = {};
+      const users = await adminCollection.find(query).toArray();
+      res.send(users);
+    });
+
+    app.post("/makeAdmin", async (req, res) => {
+      const user = req.body;
+      const result = await adminCollection.insertOne(user);
+      res.send(result);
+    });
+
+
+ app.get("/editor",  async (req, res) => {
+      const query = {};
+      const editor = await editorCollection.find(query).toArray();
+      res.send(editor);
+    });
+
+    app.post("/editor", async (req, res) => {
+      const user = req.body;
+      const result = await editorCollection.insertOne(user);
+      res.send(result);
+    });
+
+
+
+
+
+
+    app.get("/users/editor/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await usersCollection.findOne(query);
+      res.send({ isEditor: user?.role === "editor" });
+    });
+
 
     app.get("/cart/:id", async (req, res) => {
       const query = {};
