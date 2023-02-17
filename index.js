@@ -49,6 +49,7 @@ async function run() {
     const bookedCollection = client.db("explore-bd").collection("booked");
     const adminCollection = client.db("explore-bd").collection("admin");
     const editorCollection = client.db("explore-bd").collection("editor");
+    
 
     app.post("/create-payment-intent", async (req, res) => {
       const booking = req.body;
@@ -275,6 +276,14 @@ async function run() {
       const result = await packageCollection.insertOne(package);
       res.send(result);
     });
+
+    app.delete("/packageDesc/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await packageCollection.deleteOne(query);
+      res.send(result);
+    });
+    
 
     app.get("/admin/schedule", async (req, res) => {
       let query = {};
