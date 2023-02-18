@@ -91,8 +91,6 @@ async function run() {
       res.send({ isAdmin: user?.role === "admin" });
     });
 
-
-
  app.get("/makeAdmin",async (req, res) => {
       const query = {};
       const users = await adminCollection.find(query).toArray();
@@ -118,14 +116,12 @@ async function run() {
       res.send(result);
     });
 
-
     app.get("/users/editor/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email };
       const user = await usersCollection.findOne(query);
       res.send({ isEditor: user?.role === "editor" });
     });
-
 
     app.get("/cart/:id", async (req, res) => {
       const query = {};
