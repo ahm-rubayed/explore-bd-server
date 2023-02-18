@@ -47,6 +47,9 @@ async function run() {
     const snapTripCollection = client.db("explore-bd").collection("snap-trip");
     const travelPlacePurchase = client.db("explore-bd").collection("payment");
     const bookedCollection = client.db("explore-bd").collection("booked");
+    const adminCollection = client.db("explore-bd").collection("admin");
+    const editorCollection = client.db("explore-bd").collection("editor");
+    
 
     app.post("/create-payment-intent", async (req, res) => {
       const booking = req.body;
@@ -82,6 +85,31 @@ async function run() {
       const query = { email };
       const user = await usersCollection.findOne(query);
       res.send({ isAdmin: user?.role === "admin" });
+    });
+
+ app.get("/makeAdmin",async (req, res) => {
+      const query = {};
+      const users = await adminCollection.find(query).toArray();
+      res.send(users);
+    });
+
+    app.post("/makeAdmin", async (req, res) => {
+      const user = req.body;
+      const result = await adminCollection.insertOne(user);
+      res.send(result);
+    });
+
+
+ app.get("/editor",  async (req, res) => {
+      const query = {};
+      const editor = await editorCollection.find(query).toArray();
+      res.send(editor);
+    });
+
+    app.post("/editor", async (req, res) => {
+      const user = req.body;
+      const result = await editorCollection.insertOne(user);
+      res.send(result);
     });
 
     app.get("/users/editor/:email", async (req, res) => {
@@ -161,7 +189,7 @@ async function run() {
     });
 
 
-    app.delete("admin/booked/:id", async (req, res) => {
+    app.delete("/booked/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await bookedCollection.deleteOne(query);
@@ -240,6 +268,14 @@ async function run() {
       const result = await packageCollection.insertOne(package);
       res.send(result);
     });
+
+    app.delete("/packageDesc/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await packageCollection.deleteOne(query);
+      res.send(result);
+    });
+    
 
     app.get("/admin/schedule", async (req, res) => {
       let query = {};
