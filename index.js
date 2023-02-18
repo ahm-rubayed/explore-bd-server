@@ -159,6 +159,13 @@ async function run() {
       res.send(result);
     });
 
+    app.delete("/cart/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await userscartCollection.deleteMany(query);
+      res.send(result);
+    });
+
     app.get("/feedback", async (req, res) => {
       let query = {};
       const cursor = feedbackCollection.find(query);
