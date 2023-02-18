@@ -116,7 +116,7 @@ async function run() {
       const email = req.params.email;
       const query = { email };
       const user = await usersCollection.findOne(query);
-      res.send({ isAdmin: user?.role === "editor" });
+      res.send({ isEditor: user?.role === "editor" });
     });
 
     app.get("/cart/:id", async (req, res) => {
