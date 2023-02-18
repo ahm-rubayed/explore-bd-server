@@ -84,6 +84,13 @@ async function run() {
       res.send({ isAdmin: user?.role === "admin" });
     });
 
+    app.get("/users/editor/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await usersCollection.findOne(query);
+      res.send({ isAdmin: user?.role === "editor" });
+    });
+
     app.get("/cart/:id", async (req, res) => {
       const query = {};
       const cart = await userscartCollection.find(query).toArray();
