@@ -123,24 +123,18 @@ async function run() {
       res.send({ isEditor: user?.role === "editor" });
     });
 
-    app.get("/cart/:id", async (req, res) => {
-      const query = {};
-      const cart = await userscartCollection.find(query).toArray();
-      res.send(cart);
-    });
-
     // cart
     app.post("/cart", async (req, res) => {
       const cart = req.body;
-      const query = {
-        travel: cart.course,
-        email: cart.email,
-      };
-      const alreadyAdded = await userscartCollection.find(query).toArray();
-      if (alreadyAdded.length) {
-        const message = `You already have adeed this`;
-        return res.send({ acknowledged: false, message });
-      }
+      // const query = {
+      //   travel: cart.course,
+      //   email: cart.email,
+      // };
+      // const alreadyAdded = await userscartCollection.find(query).toArray();
+      // if (alreadyAdded.length) {
+      //   const message = `You already have adeed this`;
+      //   return res.send({ acknowledged: false, message });
+      // }
       const result = await userscartCollection.insertOne(cart);
       res.send(result);
     });
@@ -159,12 +153,14 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/cart/:email", async (req, res) => {
-      const email = req.params.email;
-      const query = { email: email };
-      const result = await userscartCollection.deleteMany(query);
-      res.send(result);
-    });
+    // app.delete("/cart/:email", async (req, res) => {
+    //   const email = req.params.email;
+    //   const query = { email: email }; 
+    //   const result = await userscartCollection.deleteMany(query);
+    //   res.send(result);
+    // });
+
+    // ================
 
     app.get("/feedback", async (req, res) => {
       let query = {};
