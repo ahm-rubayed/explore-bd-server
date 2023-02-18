@@ -49,7 +49,11 @@ async function run() {
     const bookedCollection = client.db("explore-bd").collection("booked");
     const adminCollection = client.db("explore-bd").collection("admin");
     const editorCollection = client.db("explore-bd").collection("editor");
-    
+    const editorCategoriesCollection = client
+    .db("explore-bd")
+    .collection("EditorCategories");
+
+
 
     app.post("/create-payment-intent", async (req, res) => {
       const booking = req.body;
@@ -115,10 +119,6 @@ async function run() {
     });
 
 
-
-
-
-
     app.get("/users/editor/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email };
@@ -179,6 +179,13 @@ async function run() {
     app.get("/admin/categories", async (req, res) => {
       let query = {};
       const cursor = categoriesCollection.find(query);
+      const categories = await cursor.toArray();
+      res.send(categories);
+    });
+
+    app.get("/editor/editorCategories", async (req, res) => {
+      let query = {};
+      const cursor = editorCategoriesCollection.find(query);
       const categories = await cursor.toArray();
       res.send(categories);
     });
