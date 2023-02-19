@@ -162,12 +162,10 @@ async function run() {
 
     // app.delete("/cart/:email", async (req, res) => {
     //   const email = req.params.email;
-    //   const query = { email: email }; 
+    //   const query = { email: email };
     //   const result = await userscartCollection.deleteMany(query);
     //   res.send(result);
     // });
-
-    // ================
 
     app.get("/feedback", async (req, res) => {
       let query = {};
@@ -208,7 +206,6 @@ async function run() {
       const result = await bookedCollection.insertOne(booked);
       res.send(result);
     });
-
 
     app.delete("/booked/:id", async (req, res) => {
       const id = req.params.id;
@@ -297,7 +294,6 @@ async function run() {
       res.send(result);
     });
     
-
     app.get("/admin/schedule", async (req, res) => {
       let query = {};
       const cursor = scheduleCollection.find(query);
